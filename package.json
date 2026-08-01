@@ -1,0 +1,14 @@
+{
+  "name": "inventario-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Registro de Productos - app estática",
+  "scripts": {
+    "dev": "npm run build && npx --yes serve public -l 3000",
+    "build": "node build.js",
+    "start": "npx --yes serve public -l 3000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
