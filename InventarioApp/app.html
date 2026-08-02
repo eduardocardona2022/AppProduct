@@ -12,6 +12,8 @@
             --color-success-hover: #059669;
             --color-danger: #ef4444;
             --color-danger-hover: #dc2626;
+            --color-whatsapp: #25d366;
+            --color-whatsapp-hover: #128c7e;
             --color-secondary: #6b7280;
             --color-secondary-hover: #4b5563;
             --color-text: #1f2937;
@@ -81,6 +83,9 @@
         .form-group input:focus { outline: none; border-color: var(--color-border-focus); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         .form-group input[readonly] { background: var(--color-bg); cursor: default; color: var(--color-text-secondary); }
         .form-group input::placeholder { color: var(--color-text-secondary); opacity: 0.7; }
+        .checkbox-group { display: flex; align-items: center; gap: var(--spacing-sm); }
+        .checkbox-group label { margin-bottom: 0; cursor: pointer; }
+        .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; min-height: 20px; accent-color: var(--color-primary); cursor: pointer; }
 
         .total-display { font-size: var(--font-size-xl); font-weight: 700; color: var(--color-primary); padding: 12px 14px; background: var(--color-info-bg); border-radius: var(--radius-md); text-align: center; margin-top: var(--spacing-sm); border: 2px solid transparent; }
 
@@ -96,13 +101,28 @@
         .btn-secondary:hover { background: var(--color-secondary-hover); }
         .btn-accent { background: var(--color-success); color: #fff; }
         .btn-accent:hover { background: var(--color-success-hover); }
+        .btn-whatsapp { background: var(--color-whatsapp); color: #fff; }
+        .btn-whatsapp:hover { background: var(--color-whatsapp-hover); }
+        .btn-whatsapp svg { width: 20px; height: 20px; }
+        [hidden] { display: none !important; }
         .btn-danger { background: var(--color-danger); color: #fff; padding: 8px 16px; font-size: var(--font-size-sm); max-width: none; width: auto; min-height: 36px; border-radius: var(--radius-sm); }
         .btn-danger:hover { background: var(--color-danger-hover); }
+        .btn-icon { width: 44px; height: 44px; min-height: 44px; max-width: none; padding: 10px; border-radius: var(--radius-sm); }
+        .btn-icon-edit { background: var(--color-primary); color: #fff; }
+        .btn-icon-edit:hover { background: var(--color-primary-hover); }
+        .btn-icon-delete { background: var(--color-danger); color: #fff; }
+        .btn-icon-delete:hover { background: var(--color-danger-hover); }
+        .table-actions { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .table-actions .btn { flex: 0 0 44px; }
+        .btn-cancelar-edicion { display: none; }
+        .btn-cancelar-edicion.visible { display: inline-flex; }
         .btn-back { background: var(--color-secondary); color: #fff; margin-bottom: var(--spacing-md); max-width: 220px; }
         .btn-back:hover { background: var(--color-secondary-hover); }
 
         .filter-group { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: var(--spacing-md); align-items: flex-end; }
         .filter-group .form-group { flex: 1; min-width: 140px; margin-bottom: 0; }
+        .filter-group select { width: 100%; padding: 12px 14px; border: 2px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); min-height: 44px; background: var(--color-surface); color: var(--color-text); cursor: pointer; }
+        .filter-group select:focus { outline: none; border-color: var(--color-border-focus); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         .filter-group .btn { width: auto; margin-top: 0; align-self: flex-end; }
 
         .table-container { overflow-x: auto; margin-top: var(--spacing-md); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); }
@@ -114,7 +134,7 @@
         tbody tr:hover { background: var(--color-bg); }
         tr:last-child td { border-bottom: none; }
         .col-num { text-align: right; font-variant-numeric: tabular-nums; }
-        .col-actions { text-align: center; width: 90px; }
+        .col-actions { text-align: center; width: 110px; }
 
         .totals-row { background: var(--color-info-bg); font-weight: 700; }
         .totals-row td { border-top: 2px solid var(--color-primary); }
@@ -126,7 +146,7 @@
         .report-card-label { color: var(--color-text-secondary); font-size: var(--font-size-sm); }
         .report-card-value { color: var(--color-text); font-weight: 600; font-size: var(--font-size-sm); text-align: right; }
         .report-card-actions { border-top: 1px solid var(--color-border); margin-top: var(--spacing-sm); padding-top: var(--spacing-sm); }
-        .btn-delete-card { width: 100%; justify-content: center; }
+        .report-card-actions .table-actions { width: 100%; justify-content: flex-end; }
 
         .report-card-totals { background: var(--color-info-bg); border-radius: var(--radius-md); padding: var(--spacing-md); margin-bottom: var(--spacing-md); border-top: 2px solid var(--color-primary); }
         .report-card-totals .report-card-value { font-weight: 700; }
@@ -249,6 +269,10 @@
                     <label for="campo-cantidad">Cantidad</label>
                     <input type="number" id="campo-cantidad" placeholder="0" min="0" step="1">
                 </div>
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="campo-entregado">
+                    <label for="campo-entregado">Entregado</label>
+                </div>
                 <div class="form-group">
                     <label>Total</label>
                     <div id="campo-total" class="total-display">0</div>
@@ -256,11 +280,15 @@
                 <div class="btn-group">
                     <button id="btn-guardar" class="btn btn-primary">
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        Guardar
+                        <span id="btn-guardar-texto">Guardar</span>
                     </button>
                     <button id="btn-limpiar" class="btn btn-secondary">
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
                         Limpiar
+                    </button>
+                    <button id="btn-cancelar-edicion" class="btn btn-secondary btn-cancelar-edicion">
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Cancelar edición
                     </button>
                     <button id="btn-ir-reportes" class="btn btn-accent">
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -285,9 +313,21 @@
                         <label for="filtro-fecha-final">Fecha Final</label>
                         <input type="date" id="filtro-fecha-final">
                     </div>
+                    <div class="form-group">
+                        <label for="filtro-entregado">Estado de entrega</label>
+                        <select id="filtro-entregado">
+                            <option value="todos">Todos</option>
+                            <option value="entregados">Entregados</option>
+                            <option value="no-entregados">No entregados</option>
+                        </select>
+                    </div>
                     <button id="btn-buscar" class="btn btn-primary">
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         Buscar
+                    </button>
+                    <button id="btn-compartir-whatsapp" class="btn btn-whatsapp" type="button" aria-label="Compartir reporte por WhatsApp" title="Compartir reporte por WhatsApp" hidden>
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 24l6.5-1.7a11.8 11.8 0 0 0 5.4 1.3h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.1-1.2-6.1-3.5-8.3Z"/><path d="M8.4 6.8c.2-.4.4-.4.8-.4h.6c.2 0 .5.1.6.5l.8 1.9c.1.3.1.5-.1.7l-.6.8c-.2.2-.2.4 0 .7.3.5 1.1 1.7 2.3 2.7 1.3 1.1 2.4 1.4 2.8 1.6.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.3.7-.2l1.8.9c.3.2.5.3.5.5 0 .3-.1 1.2-.5 1.6-.4.5-1.1.8-1.8.8-.5 0-1.2-.2-2.1-.5-.8-.3-1.9-.8-3.2-1.9-2.3-2-3.8-4.7-3.9-4.9-.1-.2-1-1.8-1-3.4 0-1.6.8-2.4 1.2-2.7Z"/></svg>
+                        Compartir
                     </button>
                 </div>
                 <div id="contenedor-tabla" class="table-container"></div>
@@ -399,6 +439,31 @@
             }
         }
 
+        function actualizarRegistro(id, cambios) {
+            var registros = obtenerRegistros();
+            var encontrado = false;
+            var actualizados = registros.map(function(registro) {
+                if (registro.id !== id) return registro;
+                encontrado = true;
+                return {
+                    id: registro.id,
+                    fechaHora: cambios.fechaHora,
+                    producto: cambios.producto,
+                    precio: cambios.precio,
+                    cantidad: cambios.cantidad,
+                    total: cambios.total,
+                    entregado: cambios.entregado
+                };
+            });
+
+            if (!encontrado) return false;
+            return actualizarRegistros(actualizados);
+        }
+
+        function obtenerEstadoEntrega(registro) {
+            return registro.entregado === true;
+        }
+
         // ============================================
         // SECCION: MENSAJES
         // ============================================
@@ -437,6 +502,8 @@
         // ============================================
         // SECCION: FORMULARIO
         // ============================================
+
+        var idEditando = null;
 
         function generarId() {
             if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -490,20 +557,42 @@
             return true;
         }
 
-        function guardar() {
-            if (!validarFormulario()) return;
-
+        function obtenerDatosFormulario() {
             var precio = parseFloat(document.getElementById('campo-precio').value);
             var cantidad = parseFloat(document.getElementById('campo-cantidad').value);
-            var total = precio * cantidad;
-
-            var registro = {
-                id: generarId(),
+            return {
                 fechaHora: document.getElementById('campo-fecha').value,
                 producto: document.getElementById('campo-producto').value.trim(),
                 precio: precio,
                 cantidad: cantidad,
-                total: total
+                total: precio * cantidad,
+                entregado: document.getElementById('campo-entregado').checked
+            };
+        }
+
+        function guardar() {
+            if (!validarFormulario()) return;
+
+            var datos = obtenerDatosFormulario();
+
+            if (idEditando) {
+                if (actualizarRegistro(idEditando, datos)) {
+                    mostrarMensaje('Registro actualizado correctamente', 'exito');
+                    limpiarFormulario();
+                } else {
+                    mostrarMensaje('No se encontro el registro a actualizar', 'error');
+                }
+                return;
+            }
+
+            var registro = {
+                id: generarId(),
+                fechaHora: datos.fechaHora,
+                producto: datos.producto,
+                precio: datos.precio,
+                cantidad: datos.cantidad,
+                total: datos.total,
+                entregado: datos.entregado
             };
 
             if (guardarRegistro(registro)) {
@@ -513,11 +602,41 @@
         }
 
         function limpiarFormulario() {
+            idEditando = null;
             document.getElementById('campo-producto').value = '';
             document.getElementById('campo-precio').value = '';
             document.getElementById('campo-cantidad').value = '';
+            document.getElementById('campo-entregado').checked = false;
             document.getElementById('campo-fecha').value = obtenerFechaActualLocal();
             document.getElementById('campo-total').textContent = '0';
+            document.getElementById('btn-guardar-texto').textContent = 'Guardar';
+            document.getElementById('btn-cancelar-edicion').classList.remove('visible');
+            document.querySelector('.header h1').textContent = 'Registro de Productos';
+        }
+
+        function iniciarEdicion(id) {
+            var registro = obtenerRegistros().find(function(r) { return r.id === id; });
+            if (!registro) {
+                mostrarMensaje('No se encontro el registro a editar', 'error');
+                return;
+            }
+
+            idEditando = id;
+            document.getElementById('campo-fecha').value = registro.fechaHora;
+            document.getElementById('campo-producto').value = registro.producto;
+            document.getElementById('campo-precio').value = registro.precio;
+            document.getElementById('campo-cantidad').value = registro.cantidad;
+            document.getElementById('campo-entregado').checked = obtenerEstadoEntrega(registro);
+            calcularTotal();
+            document.getElementById('btn-guardar-texto').textContent = 'Actualizar';
+            document.getElementById('btn-cancelar-edicion').classList.add('visible');
+            navegarA('vista-registro');
+            document.querySelector('.header h1').textContent = 'Editar Producto';
+        }
+
+        function cancelarEdicion() {
+            limpiarFormulario();
+            mostrarMensaje('Edición cancelada', 'exito');
         }
 
         // ============================================
@@ -525,24 +644,125 @@
         // ============================================
 
         var idEliminar = null;
+        var registrosCompartirActuales = [];
+        var compartirTimeout = null;
+        var compartirVisibilityHandler = null;
 
         function cargarReporte() {
             var registros = obtenerRegistros();
             dibujarTabla(registros);
         }
 
+        function crearAccionesReporte(id) {
+            var iconoEditar = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+            var iconoEliminar = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+            return '<div class="table-actions">'
+                + '<button type="button" class="btn btn-icon btn-icon-edit" aria-label="Editar registro" title="Editar registro" onclick="iniciarEdicion(\'' + id + '\')">' + iconoEditar + '</button>'
+                + '<button type="button" class="btn btn-icon btn-icon-delete" aria-label="Eliminar registro" title="Eliminar registro" onclick="confirmarEliminar(\'' + id + '\')">' + iconoEliminar + '</button>'
+                + '</div>';
+        }
+
+        function ordenarPorFechaDesc(registros) {
+            return registros.slice().sort(function(a, b) {
+                var fechaA = new Date(a.fechaHora).getTime();
+                var fechaB = new Date(b.fechaHora).getTime();
+                if (isNaN(fechaA)) return 1;
+                if (isNaN(fechaB)) return -1;
+                return fechaB - fechaA;
+            });
+        }
+
+        function actualizarVisibilidadCompartir(registros) {
+            registrosCompartirActuales = registros.slice();
+            document.getElementById('btn-compartir-whatsapp').hidden = registros.length === 0;
+        }
+
+        function generarTextoReporte(registros) {
+            var lineas = ['Reporte de Productos', ''];
+            for (var i = 0; i < registros.length; i++) {
+                var registro = registros[i];
+                lineas.push((i + 1) + '. ' + formatearFecha(registro.fechaHora));
+                lineas.push('Producto: ' + registro.producto);
+                lineas.push('Precio: ' + formatearMoneda(registro.precio));
+                lineas.push('Cantidad: ' + registro.cantidad);
+                lineas.push('Estado: ' + (obtenerEstadoEntrega(registro) ? 'Entregado' : 'No entregado'));
+                lineas.push('Total: ' + formatearMoneda(registro.total));
+                lineas.push('');
+            }
+
+            var totales = calcularTotales(registros);
+            lineas.push('TOTALES');
+            lineas.push('Precio: ' + formatearMoneda(totales.precio));
+            lineas.push('Cantidad: ' + totales.cantidad);
+            lineas.push('Total: ' + formatearMoneda(totales.total));
+            return lineas.join('\n');
+        }
+
+        function limpiarIntentoCompartir() {
+            if (compartirVisibilityHandler) {
+                document.removeEventListener('visibilitychange', compartirVisibilityHandler);
+                compartirVisibilityHandler = null;
+            }
+            if (compartirTimeout) {
+                clearTimeout(compartirTimeout);
+                compartirTimeout = null;
+            }
+        }
+
+        function compartirReporte() {
+            if (registrosCompartirActuales.length === 0) return;
+
+            limpiarIntentoCompartir();
+            var url = 'whatsapp://send?text=' + encodeURIComponent(generarTextoReporte(registrosCompartirActuales));
+            var aperturaConfirmada = false;
+
+            function mostrarErrorCompartir() {
+                if (aperturaConfirmada) return;
+                limpiarIntentoCompartir();
+                mostrarMensaje('no se puede compartir la información', 'error');
+            }
+
+            compartirVisibilityHandler = function() {
+                if (document.visibilityState === 'hidden') {
+                    aperturaConfirmada = true;
+                    limpiarIntentoCompartir();
+                }
+            };
+            document.addEventListener('visibilitychange', compartirVisibilityHandler);
+
+            try {
+                var ventana = window.open(url, '_blank');
+                if (!ventana) {
+                    mostrarErrorCompartir();
+                    return;
+                }
+            } catch (e) {
+                mostrarErrorCompartir();
+                return;
+            }
+
+            compartirTimeout = setTimeout(mostrarErrorCompartir, 2000);
+        }
+
         function filtrar() {
             var fechaInicial = document.getElementById('filtro-fecha-inicial').value;
             var fechaFinal = document.getElementById('filtro-fecha-final').value;
+            var estadoEntrega = document.getElementById('filtro-entregado').value;
             var registros = obtenerRegistros();
 
-            if (!fechaInicial && !fechaFinal) {
+            if (!fechaInicial && !fechaFinal && estadoEntrega === 'todos') {
                 dibujarTabla(registros);
                 return;
             }
 
             var filtrados = registros.filter(function(r) {
                 var fechaReg = r.fechaHora;
+                var coincideEstado = estadoEntrega === 'todos'
+                    || (estadoEntrega === 'entregados' && obtenerEstadoEntrega(r))
+                    || (estadoEntrega === 'no-entregados' && !obtenerEstadoEntrega(r));
+                if (!coincideEstado) return false;
+                if (!fechaInicial && !fechaFinal) return true;
+
                 if (fechaInicial && fechaFinal) {
                     return fechaReg >= fechaInicial + 'T00:00' && fechaReg <= fechaFinal + 'T23:59';
                 } else if (fechaInicial) {
@@ -557,18 +777,21 @@
 
         function dibujarTabla(registros) {
             var contenedor = document.getElementById('contenedor-tabla');
+            registros = ordenarPorFechaDesc(registros);
+            actualizarVisibilidadCompartir(registros);
 
             if (registros.length === 0) {
                 var fechaInicial = document.getElementById('filtro-fecha-inicial').value;
                 var fechaFinal = document.getElementById('filtro-fecha-final').value;
-                var msg = (fechaInicial || fechaFinal) ? 'No se encontraron registros en el rango seleccionado' : 'No hay registros disponibles';
+                var estadoEntrega = document.getElementById('filtro-entregado').value;
+                var msg = (fechaInicial || fechaFinal || estadoEntrega !== 'todos') ? 'No se encontraron registros con los filtros seleccionados' : 'No hay registros disponibles';
                 contenedor.innerHTML = '<div class="no-data">' + msg + '</div>';
                 dibujarCards(registros);
                 return;
             }
 
             var html = '<table><thead><tr>';
-            html += '<th>Fecha</th><th>Producto</th><th class="col-num">Precio</th><th class="col-num">Cantidad</th><th class="col-num">Total</th><th class="col-actions">Accion</th>';
+            html += '<th>Fecha</th><th>Producto</th><th class="col-num">Precio</th><th class="col-num">Cantidad</th><th class="col-num">Total</th><th>Estado</th><th class="col-actions">Accion</th>';
             html += '</tr></thead><tbody>';
 
             for (var i = 0; i < registros.length; i++) {
@@ -579,7 +802,8 @@
                 html += '<td class="col-num">' + formatearMoneda(r.precio) + '</td>';
                 html += '<td class="col-num">' + r.cantidad + '</td>';
                 html += '<td class="col-num">' + formatearMoneda(r.total) + '</td>';
-                html += '<td class="col-actions"><button class="btn btn-danger" onclick="confirmarEliminar(\'' + r.id + '\')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Eliminar</button></td>';
+                html += '<td>' + (obtenerEstadoEntrega(r) ? 'Entregado' : 'No entregado') + '</td>';
+                html += '<td class="col-actions">' + crearAccionesReporte(r.id) + '</td>';
                 html += '</tr>';
             }
 
@@ -589,6 +813,7 @@
             html += '<td class="col-num">' + formatearMoneda(totales.precio) + '</td>';
             html += '<td class="col-num">' + totales.cantidad + '</td>';
             html += '<td class="col-num">' + formatearMoneda(totales.total) + '</td>';
+            html += '<td></td>';
             html += '<td></td>';
             html += '</tr>';
 
@@ -600,11 +825,13 @@
 
         function dibujarCards(registros) {
             var contenedor = document.getElementById('contenedor-cards');
+            registros = ordenarPorFechaDesc(registros);
 
             if (registros.length === 0) {
                 var fechaInicial = document.getElementById('filtro-fecha-inicial').value;
                 var fechaFinal = document.getElementById('filtro-fecha-final').value;
-                var msg = (fechaInicial || fechaFinal) ? 'No se encontraron registros en el rango seleccionado' : 'No hay registros disponibles';
+                var estadoEntrega = document.getElementById('filtro-entregado').value;
+                var msg = (fechaInicial || fechaFinal || estadoEntrega !== 'todos') ? 'No se encontraron registros con los filtros seleccionados' : 'No hay registros disponibles';
                 contenedor.innerHTML = '<div class="no-data">' + msg + '</div>';
                 return;
             }
@@ -618,7 +845,8 @@
                 html += '<div class="report-card-field"><span class="report-card-label">Precio</span><span class="report-card-value">' + formatearMoneda(r.precio) + '</span></div>';
                 html += '<div class="report-card-field"><span class="report-card-label">Cantidad</span><span class="report-card-value">' + r.cantidad + '</span></div>';
                 html += '<div class="report-card-field"><span class="report-card-label">Total</span><span class="report-card-value">' + formatearMoneda(r.total) + '</span></div>';
-                html += '<div class="report-card-actions"><button class="btn btn-danger btn-delete-card" onclick="confirmarEliminar(\'' + r.id + '\')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Eliminar</button></div>';
+                html += '<div class="report-card-field"><span class="report-card-label">Estado</span><span class="report-card-value">' + (obtenerEstadoEntrega(r) ? 'Entregado' : 'No entregado') + '</span></div>';
+                html += '<div class="report-card-actions">' + crearAccionesReporte(r.id) + '</div>';
                 html += '</div>';
             }
 
@@ -687,6 +915,7 @@
                 headerTitle.textContent = 'Reporte de Productos';
                 document.getElementById('filtro-fecha-inicial').value = '';
                 document.getElementById('filtro-fecha-final').value = '';
+                document.getElementById('filtro-entregado').value = 'todos';
                 cargarReporte();
             } else {
                 headerTitle.textContent = 'Registro de Productos';
@@ -700,9 +929,11 @@
         document.getElementById('btn-toggle-tema').addEventListener('click', toggleTema);
         document.getElementById('btn-guardar').addEventListener('click', guardar);
         document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
+        document.getElementById('btn-cancelar-edicion').addEventListener('click', cancelarEdicion);
         document.getElementById('btn-ir-reportes').addEventListener('click', function() { navegarA('vista-reportes'); });
         document.getElementById('btn-volver').addEventListener('click', function() { navegarA('vista-registro'); });
         document.getElementById('btn-buscar').addEventListener('click', filtrar);
+        document.getElementById('btn-compartir-whatsapp').addEventListener('click', compartirReporte);
 
         document.getElementById('campo-precio').addEventListener('input', calcularTotal);
         document.getElementById('campo-cantidad').addEventListener('input', calcularTotal);

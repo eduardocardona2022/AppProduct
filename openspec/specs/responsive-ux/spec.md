@@ -7,7 +7,7 @@ Define the responsive design requirements for mobile, tablet, and desktop includ
 ## Requirements
 
 ### Requirement: Responsive design mejorado para móviles
-El sistema SHALL mejorar el diseño responsive para dispositivos móviles con patrones modernos, incluyendo adaptación del botón toggle de tema y layout de tabla de reportes.
+El sistema SHALL mejorar el diseño responsive para dispositivos móviles con patrones modernos, incluyendo adaptación del botón toggle de tema, layout de tabla de reportes y acciones de gestión de registros.
 
 #### Scenario: Layout adaptativo en pantallas pequeñas
 - **WHEN** la aplicación se visualiza en pantallas de 320px-600px
@@ -20,8 +20,9 @@ El sistema SHALL mejorar el diseño responsive para dispositivos móviles con pa
 - **WHEN** la tabla de reporte se visualiza en móvil (ancho < 601px)
 - **THEN** la tabla SHALL ocultarse y reemplazarse por cards individuales por registro
 - **THEN** cada card SHALL mostrar los datos del registro en formato vertical (label: valor)
-- **THEN** cada card SHALL incluir un botón eliminar visible en la parte inferior
-- **THEN** NO SHALL requerir scroll horizontal para ver los datos ni el botón eliminar
+- **THEN** cada card SHALL incluir acciones de editar y eliminar visibles en la parte inferior
+- **THEN** el botón eliminar SHALL mostrar solo un icono SVG con etiqueta accesible
+- **THEN** NO SHALL requerir scroll horizontal para ver los datos ni las acciones
 - **THEN** los botones de acción SHALL ser táctiles (mínimo 44x44px de área clickable)
 
 #### Scenario: Tabla en escritorio
@@ -42,7 +43,7 @@ El sistema SHALL mejorar el diseño responsive para dispositivos móviles con pa
 - **THEN** el layout del header SHALL ajustarse para acomodar el toggle
 
 ### Requirement: Touch targets accesibles
-El sistema SHALL asegurar que todos los elementos interactivos tengan áreas de touch adecuadas para móviles, incluyendo el nuevo botón toggle y el botón eliminar en cards de reporte.
+El sistema SHALL asegurar que todos los elementos interactivos tengan áreas de touch adecuadas para móviles, incluyendo el botón toggle y los botones de editar y eliminar en cards de reporte.
 
 #### Scenario: Botones con área táctil suficiente
 - **WHEN** se renderiza un botón en móvil
@@ -60,11 +61,11 @@ El sistema SHALL asegurar que todos los elementos interactivos tengan áreas de 
 - **THEN** el botón SHALL tener un área mínima de 44x44px
 - **THEN** el espaciado alrededor del botón SHALL ser al menos 8px
 
-#### Scenario: Botón eliminar en card de reporte con área táctil suficiente
-- **WHEN** se renderiza el botón eliminar en una card de reporte en móvil
-- **THEN** el botón SHALL tener un área mínima de 44x44px
-- **THEN** el botón SHALL ocupar ancho completo dentro de la card
-- **THEN** el botón SHALL ser fácilmente identificable como acción destructiva
+#### Scenario: Acciones de gestión en card con área táctil suficiente
+- **WHEN** se renderizan los botones editar y eliminar en una card de reporte en móvil
+- **THEN** cada botón SHALL tener un área mínima de 44x44px
+- **THEN** el grupo de acciones SHALL ser visible y no requerir scroll horizontal
+- **THEN** el botón eliminar SHALL ser fácilmente identificable como acción destructiva
 
 ### Requirement: Tipografía responsive
 El sistema SHALL ajustar tamaños de fuente para mejor legibilidad en diferentes tamaños de pantalla.
